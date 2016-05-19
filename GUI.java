@@ -9,9 +9,7 @@ import static java.lang.Math.*;
 
 /*
  * ToDo:
- * 
- * 
- * Add Panels to align buttons to var inputs?
+ * Add clear console button and functionality
  */
 
 @SuppressWarnings("serial")
@@ -136,6 +134,15 @@ public final class GUI extends GBFrame
 				consolePrintResults();
 			}
 		}
+		else if (buttonObj == subtractButton)
+		{
+			if (checkAllInputs())
+			{
+				lastResultNum = subtract();
+				lastResultError = subtractError();
+				consolePrintResults();
+			}
+		}
 	}
 
 	@Override
@@ -156,6 +163,7 @@ public final class GUI extends GBFrame
 	}
 	
 	//private methods ---------------------------------------------------------------------------
+	//console methods ---------------------------------------------------------------------------
 	
 	private void consolePrint(String s)
 	{
@@ -241,6 +249,16 @@ public final class GUI extends GBFrame
 	private double addError()
 	{
 		return sqrt(pow(aErrorField.getNumber(), 2) + pow(bErrorField.getNumber(), 2));
+	}
+	
+	private double subtract()
+	{
+		return aNumField.getNumber() - bNumField.getNumber();
+	}
+	
+	private double subtractError()
+	{
+		return addError();
 	}
 		
 }
