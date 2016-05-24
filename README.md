@@ -1,5 +1,3 @@
 # Physics-Legacy-Project
 
-Java
-
-Propagated Error Calculator
+Java Propagated Error Calculator
