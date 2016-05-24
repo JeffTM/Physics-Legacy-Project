@@ -9,6 +9,10 @@ import static java.lang.Math.*;
 
 /*
  * ToDo:
+ * Make all buttons function
+ * Error handling for when a or b = 0 in multiplication or division
+ * Error handling for dividing by zero (b is zero)
+ * Error handling for powers when b is zero
  * Add clear console button and functionality
  */
 
@@ -16,7 +20,7 @@ import static java.lang.Math.*;
 public final class GUI extends GBFrame
 {
 	//private class constants
-	private static final String VERSION_ID = "0.2";
+	private static final String VERSION_ID = "0.3";
 	private static final int SIZE_X = 500;
 	private static final int SIZE_Y = 500;
 	
@@ -143,6 +147,44 @@ public final class GUI extends GBFrame
 				consolePrintResults();
 			}
 		}
+		else if (buttonObj == subtractButton)
+		{
+			if (checkAllInputs())
+			{
+				lastResultNum = subtract();
+				lastResultError = subtractError();
+				consolePrintResults();
+			}
+		}
+		else if (buttonObj == multButton)
+		{
+			if (checkAllInputs())
+			{
+				lastResultNum = multiply();
+				lastResultError = multiplyError();
+				consolePrintResults();
+			}
+		}
+		else if (buttonObj == divButton)
+		{
+			if (checkAllInputs())
+			{
+				lastResultNum = divide();
+				lastResultError = divideError();
+				consolePrintResults();
+			}
+		}
+		else if (buttonObj == powButton)
+		{
+			if (checkAllInputs())
+			{
+				lastResultNum = power();
+				lastResultError = powerError();
+				consolePrintResults();
+			}
+		}
+		else
+			messageBox("Error: Button " + buttonObj.toString() + " not implemented!");
 	}
 
 	@Override
@@ -162,17 +204,18 @@ public final class GUI extends GBFrame
 			messageBox("Error: Menu item " + menuItem.toString() + " not implemented!");
 	}
 	
-	//private methods ---------------------------------------------------------------------------
 	//console methods ---------------------------------------------------------------------------
 	
 	private void consolePrint(String s)
 	{
 		console.append(s);
+		//I got this of the Internet, should automatically scroll the console when necessary
+		console.setCaretPosition(console.getDocument().getLength());
 	}
 	
 	private void consolePrintln(String s)
 	{
-		console.append(s + "\n");
+		consolePrint(s + "\n");
 	}
 	
 	private void consolePrintResults()
@@ -240,7 +283,7 @@ public final class GUI extends GBFrame
 	}
 	
 	//math methods -------------------------------------------------------------------------------
-	
+	//Inline basic operations?
 	private double add()
 	{
 		return aNumField.getNumber() + bNumField.getNumber();
@@ -260,5 +303,37 @@ public final class GUI extends GBFrame
 	{
 		return addError();
 	}
-		
+	
+	private double multiply()
+	{
+		return aNumField.getNumber() * bNumField.getNumber();
+	}
+	
+	private double multiplyError()
+	{
+		// multiply() * sqrt( (aError / a)^2 + (bError / b)^2 )
+		return multiply() * sqrt( pow(aErrorField.getNumber() / aNumField.getNumber(), 2) + pow(bErrorField.getNumber() / bNumField.getNumber(), 2) );
+	}
+	
+	private double divide()
+	{
+		// divide() * sqrt( (aError / a)^2 + (bError / b)^2 )
+		return aNumField.getNumber() / bNumField.getNumber(); 
+	}
+	
+	private double divideError()
+	{
+		return divide() * sqrt( pow(aErrorField.getNumber() / aNumField.getNumber(), 2) + pow(bErrorField.getNumber() / bNumField.getNumber(), 2) );
+	}
+	
+	//not to be confused with Math.pow()
+	private double power()
+	{
+		return pow(aNumField.getNumber(), bNumField.getNumber());
+	}
+	
+	private double powerError()
+	{
+		return power() * aErrorField.getNumber() / aNumField.getNumber();
+	}
 }
