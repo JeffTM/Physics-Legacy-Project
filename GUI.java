@@ -9,22 +9,25 @@ import static java.lang.Math.*;
 
 /*
  * ToDo:
- * Make all buttons function
- * Negative number handling
- * Nonzero warning for power method
- * Error handling for when a or b = 0 in multiplication or division?
- * Error handling for dividing by zero (b is zero)?
- * Error handling for powers when b is zero?
- * Error handling for  tan?
- * Add clear console button and functionality
- * add * pi button?
+ * See Rubric
+ */
+
+/*
+ * Possible improvements:
+ * Add abs to math methods instead of calling it from buttonClicked()
+ * Inline some of the math methods
+ * Error handling for when a or b = 0 in multiplication or division
+ * Error handling for dividing by zero (b is zero)
+ * Error handling for powers when b is zero
+ * Make some of the math methods easier to read
+ * xpi radian mode
  */
 
 @SuppressWarnings("serial")
 public final class GUI extends GBFrame
 {
 	//private class constants
-	private static final String VERSION_ID = "0.4";
+	private static final String VERSION_ID = "0.5";
 	private static final int SIZE_X = 500;
 	private static final int SIZE_Y = 500;
 	
@@ -66,12 +69,14 @@ public final class GUI extends GBFrame
 	private JButton squareRootButton;
 	//Row 7
 	private JTextArea console;
+	//Row 8
+	private JButton clearButton;
 	//DEBUG
 	private JLabel debugLabel;
 	
 	
 	/**
-	 * Standard constructor
+	 * Constructor
 	 */
 	public GUI()
 	{
@@ -108,10 +113,12 @@ public final class GUI extends GBFrame
 		tanButton = addButton("tan(a)", 6, 3, 1, 1);
 		squareButton = addButton("a^2", 6, 4, 1, 1);
 		squareRootButton = addButton("sqrt(a)", 6, 5, 1, 1);
-		//Row 7
+		//Row 8
 		console = addTextArea("Propagated Error Calculator v" + VERSION_ID + "\n", 7, 1, 5, 10);
 		console.setEditable(false);
-		//DEBUG
+		//Row 18
+		clearButton = addButton("Clear", 18, 3, 1, 1);
+		//DEBUG (row 18)
 		debugLabel = addLabel("INDEV v" + VERSION_ID , 18, 1, 1, 1);
 		
 		this.setSize(SIZE_X, SIZE_Y);
@@ -180,8 +187,10 @@ public final class GUI extends GBFrame
 		}
 		else if (buttonObj == powButton)
 		{
-			if (checkAllInputs() /* && checkPowerValues()*/)
+			if (checkAllInputs())
 			{
+				if (bErrorField.getNumber() != 0)
+					consolePrintln("Warning! The error of b is assumed to be negligible");
 				lastResultNum = power();
 				lastResultError = abs(powerError());
 				consolePrintResults();
@@ -232,6 +241,10 @@ public final class GUI extends GBFrame
 				consolePrintResults();
 			}
 		}
+		else if (buttonObj == clearButton)
+		{
+			consoleClear();
+		}
 		else
 			messageBox("Error: Button " + buttonObj.toString() + " not implemented!");
 	}
@@ -270,6 +283,12 @@ public final class GUI extends GBFrame
 	private void consolePrintResults()
 	{
 		consolePrintln(lastResultNum + " +- " + lastResultError);
+	}
+	
+	private void consoleClear()
+	{
+		console.setText("");
+		console.setCaretPosition(console.getDocument().getLength());
 	}
 	
 	//error checking methods ---------------------------------------------------------------------
