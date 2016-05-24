@@ -10,17 +10,21 @@ import static java.lang.Math.*;
 /*
  * ToDo:
  * Make all buttons function
- * Error handling for when a or b = 0 in multiplication or division
- * Error handling for dividing by zero (b is zero)
- * Error handling for powers when b is zero
+ * Negative number handling
+ * Nonzero warning for power method
+ * Error handling for when a or b = 0 in multiplication or division?
+ * Error handling for dividing by zero (b is zero)?
+ * Error handling for powers when b is zero?
+ * Error handling for  tan?
  * Add clear console button and functionality
+ * add * pi button?
  */
 
 @SuppressWarnings("serial")
 public final class GUI extends GBFrame
 {
 	//private class constants
-	private static final String VERSION_ID = "0.3";
+	private static final String VERSION_ID = "0.4";
 	private static final int SIZE_X = 500;
 	private static final int SIZE_Y = 500;
 	
@@ -134,7 +138,7 @@ public final class GUI extends GBFrame
 			if (checkAllInputs())
 			{
 				lastResultNum = add();
-				lastResultError = addError();
+				lastResultError = abs(addError()); //Relocate to error method?
 				consolePrintResults();
 			}
 		}
@@ -143,7 +147,7 @@ public final class GUI extends GBFrame
 			if (checkAllInputs())
 			{
 				lastResultNum = subtract();
-				lastResultError = subtractError();
+				lastResultError = abs(subtractError());
 				consolePrintResults();
 			}
 		}
@@ -152,34 +156,79 @@ public final class GUI extends GBFrame
 			if (checkAllInputs())
 			{
 				lastResultNum = subtract();
-				lastResultError = subtractError();
+				lastResultError = abs(subtractError());
 				consolePrintResults();
 			}
 		}
 		else if (buttonObj == multButton)
 		{
-			if (checkAllInputs())
+			if (checkAllInputs() /* && checkMultiplyValues()*/)
 			{
 				lastResultNum = multiply();
-				lastResultError = multiplyError();
+				lastResultError = abs(multiplyError());
 				consolePrintResults();
 			}
 		}
 		else if (buttonObj == divButton)
 		{
-			if (checkAllInputs())
+			if (checkAllInputs() /* && checkDivideValues()*/)
 			{
 				lastResultNum = divide();
-				lastResultError = divideError();
+				lastResultError = abs(divideError());
 				consolePrintResults();
 			}
 		}
 		else if (buttonObj == powButton)
 		{
-			if (checkAllInputs())
+			if (checkAllInputs() /* && checkPowerValues()*/)
 			{
 				lastResultNum = power();
-				lastResultError = powerError();
+				lastResultError = abs(powerError());
+				consolePrintResults();
+			}
+		}
+		else if (buttonObj == sinButton)
+		{
+			if (checkAInputs())
+			{
+				lastResultNum = sine();
+				lastResultError = abs(sineError());
+				consolePrintResults();
+			}
+		}
+		else if (buttonObj == cosButton)
+		{
+			if (checkAInputs())
+			{
+				lastResultNum = cosine();
+				lastResultError = abs(cosineError());
+				consolePrintResults();
+			}
+		}
+		else if (buttonObj == tanButton)
+		{
+			if (checkAInputs())
+			{
+				lastResultNum = tangent();
+				lastResultError = abs(tangentError());
+				consolePrintResults();
+			}
+		}
+		else if (buttonObj == squareButton)
+		{
+			if (checkAInputs())
+			{
+				lastResultNum = square();
+				lastResultError = abs(squareError());
+				consolePrintResults();
+			}
+		}
+		else if (buttonObj == squareRootButton)
+		{
+			if (checkAInputs())
+			{
+				lastResultNum = squareRoot();
+				lastResultError = abs(squareRootError());
 				consolePrintResults();
 			}
 		}
@@ -311,18 +360,18 @@ public final class GUI extends GBFrame
 	
 	private double multiplyError()
 	{
-		// multiply() * sqrt( (aError / a)^2 + (bError / b)^2 )
+		// a * b * sqrt( (aError / a)^2 + (bError / b)^2 )
 		return multiply() * sqrt( pow(aErrorField.getNumber() / aNumField.getNumber(), 2) + pow(bErrorField.getNumber() / bNumField.getNumber(), 2) );
 	}
 	
 	private double divide()
 	{
-		// divide() * sqrt( (aError / a)^2 + (bError / b)^2 )
 		return aNumField.getNumber() / bNumField.getNumber(); 
 	}
 	
 	private double divideError()
 	{
+		// a / b * sqrt( (aError / a)^2 + (bError / b)^2 )
 		return divide() * sqrt( pow(aErrorField.getNumber() / aNumField.getNumber(), 2) + pow(bErrorField.getNumber() / bNumField.getNumber(), 2) );
 	}
 	
@@ -335,5 +384,74 @@ public final class GUI extends GBFrame
 	private double powerError()
 	{
 		return power() * aErrorField.getNumber() / aNumField.getNumber();
+	}
+	
+	private double sine()
+	{
+		if (usingDeg)
+			return sin(toRadians(aNumField.getNumber()));
+		else
+			return sin(aNumField.getNumber());
+	}
+	
+	private double sineError()
+	{
+		if (usingDeg)
+			return toRadians(aErrorField.getNumber()) * cos(toRadians(aNumField.getNumber()));
+		else
+			return aErrorField.getNumber() * cos(aNumField.getNumber());
+	}
+	
+	private double cosine()
+	{
+		if (usingDeg)
+			return cos(toRadians(aNumField.getNumber()));
+		else
+			return cos(aNumField.getNumber());
+	}
+	
+	private double cosineError()
+	{
+		if (usingDeg)
+			return toRadians(aErrorField.getNumber()) * sin(toRadians(aNumField.getNumber()));
+		else
+			return aErrorField.getNumber() * sin(aNumField.getNumber());
+	}
+	
+	private double tangent()
+	{
+		if (usingDeg)
+			return tan(toRadians(aNumField.getNumber()));
+		else
+			return tan(aNumField.getNumber());
+	}
+	
+	private double tangentError()
+	{
+		// deltaX / cos^2(x)
+		if (usingDeg)
+			return ( toRadians(aErrorField.getNumber()) ) / ( pow(cos(toRadians(aNumField.getNumber())), 2) );
+		else
+			return ( aErrorField.getNumber() ) / ( pow(cos(aNumField.getNumber()), 2) );
+	}
+	
+	private double square()
+	{
+		return pow(aNumField.getNumber(), 2);
+	}
+	
+	private double squareError()
+	{
+		return aNumField.getNumber() * aErrorField.getNumber();
+	}
+	
+	private double squareRoot()
+	{
+		return sqrt(aNumField.getNumber());
+	}
+	
+	private double squareRootError()
+	{
+		return aErrorField.getNumber() / sqrt(aNumField.getNumber());
 	}
 }
