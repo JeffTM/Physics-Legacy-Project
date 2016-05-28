@@ -20,7 +20,7 @@ import static java.lang.Math.*;
 public final class GUI extends GBFrame
 {
 	//private class constants
-	private static final String VERSION_ID = "1.1";
+	private static final String VERSION_ID = "1.2";
 	private static final int SIZE_X = 500;
 	private static final int SIZE_Y = 500;
 	
@@ -411,7 +411,7 @@ public final class GUI extends GBFrame
 	// a^(b-1) * aError
 	private double powerError()
 	{
-		return pow(aNumField.getNumber(), bNumField.getNumber() - 1) * aErrorField.getNumber();
+		return abs(pow(aNumField.getNumber(), bNumField.getNumber() - 1) * aErrorField.getNumber());
 	}
 	
 	private double sine()
@@ -467,10 +467,10 @@ public final class GUI extends GBFrame
 		return pow(aNumField.getNumber(), 2);
 	}
 	
-	// a * aError
+	// |a * aError|
 	private double squareError()
 	{
-		return aNumField.getNumber() * aErrorField.getNumber();
+		return abs(aNumField.getNumber() * aErrorField.getNumber());
 	}
 	
 	private double squareRoot()
@@ -478,8 +478,9 @@ public final class GUI extends GBFrame
 		return sqrt(aNumField.getNumber());
 	}
 	
+	// aError / sqrt(a)
 	private double squareRootError()
 	{
-		return aErrorField.getNumber() / sqrt(aNumField.getNumber());
+		return abs(aErrorField.getNumber() / sqrt(aNumField.getNumber()));
 	}
 }
