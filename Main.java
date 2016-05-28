@@ -1,9 +1,4 @@
-//Apparatus
-
-//Libraries used:
-import javax.swing.*;
-//import BreezySwing.*;
-//import static java.lang.Math.*;
+import javax.swing.JFrame;
 
 public class Main
 {

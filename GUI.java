@@ -8,18 +8,10 @@ import static java.lang.Math.*;
  */
 
 /*
- * ToDo:
- * See Rubric
- */
-
-/*
  * Possible improvements:
- * Add abs to math methods instead of calling it from buttonClicked()
- * Inline some of the math methods
  * Error handling for when a or b = 0 in multiplication or division
  * Error handling for dividing by zero (b is zero)
- * Error handling for powers when b is zero
- * Make some of the math methods easier to read
+ * Error handling for powers when a and b are zero
  * xpi radian mode
  */
 
@@ -27,14 +19,14 @@ import static java.lang.Math.*;
 public final class GUI extends GBFrame
 {
 	//private class constants
-	private static final String VERSION_ID = "0.5";
+	private static final String VERSION_ID = "1.0";
 	private static final int SIZE_X = 500;
 	private static final int SIZE_Y = 500;
 	
 	//private variables
 	private boolean usingDeg;
-	private double lastResultNum;
-	private double lastResultError;
+	private double lastNumResult;
+	private double lastErrorResult;
 	
 	//Window Components
 	//Window Menu
@@ -42,14 +34,18 @@ public final class GUI extends GBFrame
 	private JMenuItem angDegItem;
 	
 	//Row 1
+	@SuppressWarnings("unused")
 	private JLabel aNumLabel;
+	@SuppressWarnings("unused")
 	private JLabel aErrorLabel;
 	//Row 2
 	private DoubleField aNumField;
 	private DoubleField aErrorField;
 	private JButton aAnsButton;
 	//Row 3
+	@SuppressWarnings("unused")
 	private JLabel bNumLabel;
+	@SuppressWarnings("unused")
 	private JLabel bErrorLabel;
 	//Row 4
 	private DoubleField bNumField;
@@ -71,9 +67,6 @@ public final class GUI extends GBFrame
 	private JTextArea console;
 	//Row 8
 	private JButton clearButton;
-	//DEBUG
-	private JLabel debugLabel;
-	
 	
 	/**
 	 * Constructor
@@ -81,8 +74,8 @@ public final class GUI extends GBFrame
 	public GUI()
 	{
 		usingDeg = false;
-		lastResultNum = 0;
-		lastResultError = 0;
+		lastNumResult = 0;
+		lastErrorResult = 0;
 		
 		angRadItem = addMenuItem("Angle Mode", "Radians");
 		angDegItem = addMenuItem("Angle Mode", "Degrees");
@@ -118,8 +111,6 @@ public final class GUI extends GBFrame
 		console.setEditable(false);
 		//Row 18
 		clearButton = addButton("Clear", 18, 3, 1, 1);
-		//DEBUG (row 18)
-		debugLabel = addLabel("INDEV v" + VERSION_ID , 18, 1, 1, 1);
 		
 		this.setSize(SIZE_X, SIZE_Y);
 		this.setTitle("Propagated Error Calculator v" + VERSION_ID);
@@ -132,20 +123,20 @@ public final class GUI extends GBFrame
 	{
 		if (buttonObj == aAnsButton)
 		{	
-			aNumField.setNumber(lastResultNum);
-			aErrorField.setNumber(lastResultError);
+			aNumField.setNumber(lastNumResult);
+			aErrorField.setNumber(lastErrorResult);
 		}
 		else if (buttonObj == bAnsButton)
 		{
-			bNumField.setNumber(lastResultNum);
-			bErrorField.setNumber(lastResultError);
+			bNumField.setNumber(lastNumResult);
+			bErrorField.setNumber(lastErrorResult);
 		}
 		else if (buttonObj == addButton)
 		{
 			if (checkAllInputs())
 			{
-				lastResultNum = add();
-				lastResultError = abs(addError()); //Relocate to error method?
+				lastNumResult = add();
+				lastErrorResult = addError();
 				consolePrintResults();
 			}
 		}
@@ -153,8 +144,8 @@ public final class GUI extends GBFrame
 		{
 			if (checkAllInputs())
 			{
-				lastResultNum = subtract();
-				lastResultError = abs(subtractError());
+				lastNumResult = subtract();
+				lastErrorResult = subtractError();
 				consolePrintResults();
 			}
 		}
@@ -162,8 +153,8 @@ public final class GUI extends GBFrame
 		{
 			if (checkAllInputs())
 			{
-				lastResultNum = subtract();
-				lastResultError = abs(subtractError());
+				lastNumResult = subtract();
+				lastErrorResult = subtractError();
 				consolePrintResults();
 			}
 		}
@@ -171,8 +162,8 @@ public final class GUI extends GBFrame
 		{
 			if (checkAllInputs() /* && checkMultiplyValues()*/)
 			{
-				lastResultNum = multiply();
-				lastResultError = abs(multiplyError());
+				lastNumResult = multiply();
+				lastErrorResult = multiplyError();
 				consolePrintResults();
 			}
 		}
@@ -180,8 +171,8 @@ public final class GUI extends GBFrame
 		{
 			if (checkAllInputs() /* && checkDivideValues()*/)
 			{
-				lastResultNum = divide();
-				lastResultError = abs(divideError());
+				lastNumResult = divide();
+				lastErrorResult = divideError();
 				consolePrintResults();
 			}
 		}
@@ -191,8 +182,8 @@ public final class GUI extends GBFrame
 			{
 				if (bErrorField.getNumber() != 0)
 					consolePrintln("Warning! The error of b is assumed to be negligible");
-				lastResultNum = power();
-				lastResultError = abs(powerError());
+				lastNumResult = power();
+				lastErrorResult = powerError();
 				consolePrintResults();
 			}
 		}
@@ -200,8 +191,8 @@ public final class GUI extends GBFrame
 		{
 			if (checkAInputs())
 			{
-				lastResultNum = sine();
-				lastResultError = abs(sineError());
+				lastNumResult = sine();
+				lastErrorResult = sineError();
 				consolePrintResults();
 			}
 		}
@@ -209,8 +200,8 @@ public final class GUI extends GBFrame
 		{
 			if (checkAInputs())
 			{
-				lastResultNum = cosine();
-				lastResultError = abs(cosineError());
+				lastNumResult = cosine();
+				lastErrorResult = cosineError();
 				consolePrintResults();
 			}
 		}
@@ -218,8 +209,8 @@ public final class GUI extends GBFrame
 		{
 			if (checkAInputs())
 			{
-				lastResultNum = tangent();
-				lastResultError = abs(tangentError());
+				lastNumResult = tangent();
+				lastErrorResult = tangentError();
 				consolePrintResults();
 			}
 		}
@@ -227,8 +218,8 @@ public final class GUI extends GBFrame
 		{
 			if (checkAInputs())
 			{
-				lastResultNum = square();
-				lastResultError = abs(squareError());
+				lastNumResult = square();
+				lastErrorResult = squareError();
 				consolePrintResults();
 			}
 		}
@@ -236,8 +227,8 @@ public final class GUI extends GBFrame
 		{
 			if (checkAInputs())
 			{
-				lastResultNum = squareRoot();
-				lastResultError = abs(squareRootError());
+				lastNumResult = squareRoot();
+				lastErrorResult = squareRootError();
 				consolePrintResults();
 			}
 		}
@@ -282,7 +273,7 @@ public final class GUI extends GBFrame
 	
 	private void consolePrintResults()
 	{
-		consolePrintln(lastResultNum + " +- " + lastResultError);
+		consolePrintln(lastNumResult + " +- " + lastErrorResult);
 	}
 	
 	private void consoleClear()
@@ -351,12 +342,13 @@ public final class GUI extends GBFrame
 	}
 	
 	//math methods -------------------------------------------------------------------------------
-	//Inline basic operations?
+	
 	private double add()
 	{
 		return aNumField.getNumber() + bNumField.getNumber();
 	}
 	
+	//sqrt(a^2 + b^2)
 	private double addError()
 	{
 		return sqrt(pow(aErrorField.getNumber(), 2) + pow(bErrorField.getNumber(), 2));
@@ -367,6 +359,7 @@ public final class GUI extends GBFrame
 		return aNumField.getNumber() - bNumField.getNumber();
 	}
 	
+	//same as addError()
 	private double subtractError()
 	{
 		return addError();
@@ -377,10 +370,13 @@ public final class GUI extends GBFrame
 		return aNumField.getNumber() * bNumField.getNumber();
 	}
 	
+	// |a * b * sqrt( (aError / a)^2 + (bError / b)^2 )|
 	private double multiplyError()
 	{
-		// a * b * sqrt( (aError / a)^2 + (bError / b)^2 )
-		return multiply() * sqrt( pow(aErrorField.getNumber() / aNumField.getNumber(), 2) + pow(bErrorField.getNumber() / bNumField.getNumber(), 2) );
+		double a = aNumField.getNumber();
+		double b = bNumField.getNumber();
+		
+		return abs( a * b * sqrt( pow(aErrorField.getNumber() / a, 2) + pow(bErrorField.getNumber() / b, 2) ) );
 	}
 	
 	private double divide()
@@ -388,10 +384,13 @@ public final class GUI extends GBFrame
 		return aNumField.getNumber() / bNumField.getNumber(); 
 	}
 	
+	// a / b * sqrt( (aError / a)^2 + (bError / b)^2 )
 	private double divideError()
 	{
-		// a / b * sqrt( (aError / a)^2 + (bError / b)^2 )
-		return divide() * sqrt( pow(aErrorField.getNumber() / aNumField.getNumber(), 2) + pow(bErrorField.getNumber() / bNumField.getNumber(), 2) );
+		double a = aNumField.getNumber();
+		double b = bNumField.getNumber();
+		
+		return abs( a / b * sqrt( pow(aErrorField.getNumber() / a, 2) + pow(bErrorField.getNumber() / b, 2) ) );
 	}
 	
 	//not to be confused with Math.pow()
@@ -400,58 +399,58 @@ public final class GUI extends GBFrame
 		return pow(aNumField.getNumber(), bNumField.getNumber());
 	}
 	
+	// a^(b-1) * aError
 	private double powerError()
 	{
-		return power() * aErrorField.getNumber() / aNumField.getNumber();
+		return pow(aNumField.getNumber(), bNumField.getNumber() - 1) * aErrorField.getNumber();
 	}
 	
 	private double sine()
 	{
-		if (usingDeg)
-			return sin(toRadians(aNumField.getNumber()));
-		else
-			return sin(aNumField.getNumber());
+		double a = usingDeg ? toRadians(aNumField.getNumber()) : aNumField.getNumber();
+		
+		return sin(a);
 	}
 	
+	// |aError * cos(a)|
 	private double sineError()
 	{
-		if (usingDeg)
-			return toRadians(aErrorField.getNumber()) * cos(toRadians(aNumField.getNumber()));
-		else
-			return aErrorField.getNumber() * cos(aNumField.getNumber());
+		double a = usingDeg ? toRadians(aNumField.getNumber()) : aNumField.getNumber();
+		double aError = usingDeg ? toRadians(aErrorField.getNumber()) : aErrorField.getNumber();
+		
+		return abs(aError * cos(a));
 	}
 	
 	private double cosine()
 	{
-		if (usingDeg)
-			return cos(toRadians(aNumField.getNumber()));
-		else
-			return cos(aNumField.getNumber());
+		double a = usingDeg ? toRadians(aNumField.getNumber()) : aNumField.getNumber();
+		
+		return cos(a);
 	}
 	
+	// |aError * sin(a)|
 	private double cosineError()
 	{
-		if (usingDeg)
-			return toRadians(aErrorField.getNumber()) * sin(toRadians(aNumField.getNumber()));
-		else
-			return aErrorField.getNumber() * sin(aNumField.getNumber());
+		double a = usingDeg ? toRadians(aNumField.getNumber()) : aNumField.getNumber();
+		double aError = usingDeg ? toRadians(aErrorField.getNumber()) : aErrorField.getNumber();
+		
+		return abs(aError * sin(a));
 	}
 	
 	private double tangent()
 	{
-		if (usingDeg)
-			return tan(toRadians(aNumField.getNumber()));
-		else
-			return tan(aNumField.getNumber());
+		double a = usingDeg ? toRadians(aNumField.getNumber()) : aNumField.getNumber();
+		
+		return tan(a);
 	}
 	
+	// |aError / cos^2(a)|
 	private double tangentError()
 	{
-		// deltaX / cos^2(x)
-		if (usingDeg)
-			return ( toRadians(aErrorField.getNumber()) ) / ( pow(cos(toRadians(aNumField.getNumber())), 2) );
-		else
-			return ( aErrorField.getNumber() ) / ( pow(cos(aNumField.getNumber()), 2) );
+		double a = usingDeg ? toRadians(aNumField.getNumber()) : aNumField.getNumber();
+		double aError = usingDeg ? toRadians(aErrorField.getNumber()) : aErrorField.getNumber();
+		
+		return abs( aError / ( pow(cos(a), 2) ) );
 	}
 	
 	private double square()
@@ -459,6 +458,7 @@ public final class GUI extends GBFrame
 		return pow(aNumField.getNumber(), 2);
 	}
 	
+	// a * aError
 	private double squareError()
 	{
 		return aNumField.getNumber() * aErrorField.getNumber();
