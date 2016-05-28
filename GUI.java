@@ -9,6 +9,7 @@ import static java.lang.Math.*;
 
 /*
  * Possible improvements:
+ * Add user manual
  * Error handling for when a or b = 0 in multiplication or division
  * Error handling for dividing by zero (b is zero)
  * Error handling for powers when a and b are zero
@@ -19,7 +20,7 @@ import static java.lang.Math.*;
 public final class GUI extends GBFrame
 {
 	//private class constants
-	private static final String VERSION_ID = "1.0";
+	private static final String VERSION_ID = "1.1";
 	private static final int SIZE_X = 500;
 	private static final int SIZE_Y = 500;
 	
@@ -32,6 +33,9 @@ public final class GUI extends GBFrame
 	//Window Menu
 	private JMenuItem angRadItem;
 	private JMenuItem angDegItem;
+	//Help Menu
+	//private JMenuItem manualItem;
+	private JMenuItem creditsItem;
 	
 	//Row 1
 	@SuppressWarnings("unused")
@@ -68,17 +72,18 @@ public final class GUI extends GBFrame
 	//Row 8
 	private JButton clearButton;
 	
-	/**
-	 * Constructor
-	 */
+	//Constructor
 	public GUI()
 	{
 		usingDeg = false;
 		lastNumResult = 0;
 		lastErrorResult = 0;
 		
+		//menu items
 		angRadItem = addMenuItem("Angle Mode", "Radians");
 		angDegItem = addMenuItem("Angle Mode", "Degrees");
+		//manualItem = addMenuItem("Help", "Manual");
+		creditsItem = addMenuItem("Help", "Credits");
 		
 		//row 1
 		aNumLabel = addLabel("a", 1, 1, 2, 1);
@@ -252,6 +257,10 @@ public final class GUI extends GBFrame
 		{
 			usingDeg = true;
 			consolePrintln("angle mode: degrees");
+		}
+		else if (menuItem == creditsItem)
+		{
+			messageBox("Java Propagated Error Calculator\n" + "by Jeffrey Matthews\n" + "AP Physics 2016\n" + "\n" + "BreezySwing library by Ken Lambert and Martin Osborn" , 450, 250);
 		}
 		else
 			messageBox("Error: Menu item " + menuItem.toString() + " not implemented!");
