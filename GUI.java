@@ -20,7 +20,7 @@ import static java.lang.Math.*;
 public final class GUI extends GBFrame
 {
 	//private class constants
-	private static final String VERSION_ID = "1.2";
+	private static final String VERSION_ID = "1.3";
 	private static final int SIZE_X = 500;
 	private static final int SIZE_Y = 500;
 	
@@ -35,7 +35,7 @@ public final class GUI extends GBFrame
 	private JMenuItem angDegItem;
 	//Help Menu
 	//private JMenuItem manualItem;
-	private JMenuItem creditsItem;
+	private JMenuItem aboutItem;
 	
 	//Row 1
 	@SuppressWarnings("unused")
@@ -83,7 +83,7 @@ public final class GUI extends GBFrame
 		angRadItem = addMenuItem("Angle Mode", "Radians");
 		angDegItem = addMenuItem("Angle Mode", "Degrees");
 		//manualItem = addMenuItem("Help", "Manual");
-		creditsItem = addMenuItem("Help", "Credits");
+		aboutItem = addMenuItem("Help", "About");
 		
 		//row 1
 		aNumLabel = addLabel("a", 1, 1, 2, 1);
@@ -258,9 +258,17 @@ public final class GUI extends GBFrame
 			usingDeg = true;
 			consolePrintln("angle mode: degrees");
 		}
-		else if (menuItem == creditsItem)
+		else if (menuItem == aboutItem)
 		{
-			messageBox("Java Propagated Error Calculator\n" + "by Jeffrey Matthews\n" + "AP Physics 2016\n" + "\n" + "BreezySwing library by Ken Lambert and Martin Osborn" , 450, 250);
+			messageBox("Java Propagated Error Calculator\n" + 
+					"by Jeffrey Matthews\n" + 
+					"AP Physics 2016\n" + 
+					"\n" + 
+					"BreezySwing library by Ken Lambert and Martin Osborn" + "\n" +
+					"\n" +
+					"Software Version: " + VERSION_ID + "\n"
+					+ "Java Version: " + System.getProperty("java.version") , 
+					450, 250);
 		}
 		else
 			messageBox("Error: Menu item " + menuItem.toString() + " not implemented!");
